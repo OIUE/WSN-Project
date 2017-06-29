@@ -35,9 +35,9 @@ static void getBatteryLevel(){
   message.battery = battery_val;
 }
 /*---------------------------------------------------------------------------*/
-static void sendToSink(){
+static void sendToSink(void* message){
   printf("sending data to sink\n");
-  uip_udp_packet_sendto(sink_conn, &message, sizeof(message),
+  uip_udp_packet_sendto(sink_conn, message, sizeof(*message),
   &sink_ipaddr, UIP_HTONS(UDP_SINK_PORT));
 }
 /*---------------------------------------------------------------------------*/
@@ -53,7 +53,7 @@ static void checkBattery(int mode){
   printf("trying to send battery\n");
   printf("battery is %d\n", message.battery);
   if((message.battery <= 1883) || mode == 0){
-    sendToSink();
+    sendToSink(&message);
   }
 }
 /*---------------------------------------------------------------------------*/

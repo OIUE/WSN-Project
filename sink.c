@@ -5,12 +5,16 @@
 #include "net/rpl/rpl.h"
 #include "sys/node-id.h"
 
+#include "uip-ds6-nbr.h"
+#include "nbr-table.h"
+
 #include "net/netstack.h"
 #include <stdio.h>
 
 #include "dev/leds.h"
 /*----------------------------------------------------------------------------*/
 #define UDP_SINK_PORT 7777
+#define UDP_IP_BUF    ((struct uip_udpip_hdr* ) &uip_buf[UIP_LLH_LEN])
 typedef struct msg{
   uint16_t nodeId;
   uint16_t battery;
@@ -20,21 +24,9 @@ static struct uip_udp_conn* conn;
 static uip_ip6addr_t ipaddr;
 /*----------------------------------------------------------------------------*/
 static void tcpip_handler(){
-//  msg_t* appdata;
   if(uip_newdata()){
-    // USES TOO MUCH SPACE
-    // appdata = (msg_t*)uip_appdata;
-    // uint16_t battery = appdata->battery;
-    // uint16_t nid = appdata->nodeId;
-    // float mv = (battery * 5.0) / 4096;
-    //
-    // printf("Battery Level of node %u is %i.%03dV ",appdata->nodeId,(int)mv,
-    // (int)((mv-(int)mv)*1000));
-    printf("Got message\n");
+    printf("got message\n");
   }
-  //TODO warning for user when battery is low
-
-
 }
 /*----------------------------------------------------------------------------*/
 PROCESS(sink_process,"Sink process");
