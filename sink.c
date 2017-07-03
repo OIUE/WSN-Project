@@ -25,7 +25,14 @@ static uip_ip6addr_t ipaddr;
 /*----------------------------------------------------------------------------*/
 static void tcpip_handler(){
   if(uip_newdata()){
-    printf("got message\n");
+    leds_toggle(LEDS_RED);
+    msg_t message = * (msg_t*)uip_appdata;
+    
+    /*
+    * 2.1V is the minimum power to operate the radio, so send warning before that
+    * battery value of 1883.7 is equal to 2.3V
+    */
+    printf("node %i : battery at %i\n", message.nodeId, message.battery);
   }
 }
 /*----------------------------------------------------------------------------*/

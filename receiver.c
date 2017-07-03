@@ -27,7 +27,12 @@ static int normalRSSI = 0;
 static int count = 0;
 static int last[SAMPLE_LEN];
 static struct etimer pairTimer;
+static int senderId;
 /*----------------------------------------------------------------------------*/
+
+/*
+* Goes through the neighbor table and sends it's node id to every listed Ip-Addr
+*/
 static void pairWithSender(){
   uip_ds6_nbr_t *nbr = nbr_table_head(ds6_neighbors);
   while(nbr != NULL){
@@ -41,45 +46,60 @@ static void pairWithSender(){
   }
 }
 /*----------------------------------------------------------------------------*/
-static void tcpip_handler(){
-  leds_off(LEDS_GREEN);
 
+/*
+* Reads RSSI of a received packet. Calculates a mean RSSI value
+* and checks whether the RSSI is below that.
+*/
+static void tcpip_handler(){
   radio_value_t rssi;
-  rssi = packetbuf_attr(PACKETBUF_ATTR_RSSI);
 
   uint16_t* appdata;
   if(uip_newdata()){
+    rssi = packetbuf_attr(PACKETBUF_ATTR_RSSI);
     appdata = (uint16_t*)uip_appdata;
     printf("Got Data from %u: ",*appdata);
     printf("RSSI = %ddBm\n",rssi);
-  }
-
-  if(count < SAMPLE_LEN){
-    leds_on(LEDS_BLUE);
-    last[count] = rssi;
-    count++;
-  }else if(normalRSSI == 0){
-    leds_off(LEDS_BLUE);
-    int normal = 0;
-    int i = 0;
-    printf("Last %i RSSI:",SAMPLE_LEN);
-    for(;i < SAMPLE_LEN; i++){
-      normal = normal + last[i];
-      printf(" %i ",last[i]);
+    /* save first received senderId */
+    if(senderId == 0){
+      senderId = *appdata;
     }
-    printf("\n");
-    normalRSSI = normal/SAMPLE_LEN;
-    printf("Normal RSSI is %i\n",normalRSSI);
-  }else{
-    leds_toggle(LEDS_BLUE);
-    if(rssi < normalRSSI-ERROR_TOLERANCE ){
-      leds_on(LEDS_RED);
-      printf("RSSI difference of %i\n",rssi - normalRSSI);
+    /* in case senders change: reset normal rssi*/
+    if(senderId != *appdata){
+      senderId = *appdata;
+      count = 0;
+      memset(last,0,sizeof(last));
+      normalRSSI = 0;
+    }
+    /* sample RSSI */
+    if(count < SAMPLE_LEN){
+      leds_on(LEDS_BLUE);
+      last[count] = rssi;
+      count++;
+      /* calculate mean value */
+    }else if(normalRSSI == 0){
+      leds_off(LEDS_BLUE);
+      int normal = 0;
+      int i = 0;
+      printf("Last %i RSSI:",SAMPLE_LEN);
+      for(;i < SAMPLE_LEN; i++){
+        normal = normal + last[i];
+        printf(" %i ",last[i]);
+      }
+      printf("\n");
+      normalRSSI = normal/SAMPLE_LEN;
+      printf("Normal RSSI is %i\n",normalRSSI);
     }else{
-      leds_off(LEDS_RED);
+      /* check if RSSI is lower than normal*/
+      leds_toggle(LEDS_BLUE);
+      if(rssi < normalRSSI-ERROR_TOLERANCE ){
+        leds_on(LEDS_RED);
+        printf("RSSI difference of %i\n",rssi - normalRSSI);
+      }else{
+        leds_off(LEDS_RED);
+      }
     }
   }
-  leds_on(LEDS_GREEN);
 }
 /*----------------------------------------------------------------------------*/
 PROCESS(receiver_process,"Receiver process");
@@ -90,9 +110,8 @@ PROCESS_THREAD(receiver_process, ev, data){
   uip_ipaddr_t ipaddr;
   leds_on(LEDS_GREEN);
 
-  /* set local link adress */
+  /* set global adress */
   uip_ip6addr(&ipaddr, UIP_DS6_DEFAULT_PREFIX, 0, 0, 0, 0, 0, 0, node_id);
-  //uip_ds6_set_addr_iid(&ipaddr, &uip_lladdr);
   uip_ds6_addr_add(&ipaddr, 0, ADDR_MANUAL);
 
 
@@ -125,14 +144,27 @@ PROCESS_THREAD(receiver_process, ev, data){
     if(ev == tcpip_event) {
       tcpip_handler();
     }
+
     if(etimer_expired(&batteryTimer)) {
-      checkBattery(1);
+      checkBattery();
       etimer_reset(&batteryTimer);
     }
+
+    /* if button is pressed once: send battery status to sink, if twice: recalculate mean RSSI*/
     if(ev == sensors_event && data == &button_sensor) {
-      checkBattery(0);
+      etimer_set(&pairTimer,CLOCK_SECOND);
+      PROCESS_WAIT_EVENT_UNTIL((ev == sensors_event && data == &button_sensor) || etimer_expired(&pairTimer));
+      if(etimer_expired(&pairTimer)){
+        checkBattery();
+      }else if(ev == sensors_event && data == &button_sensor){
+        printf("recalculating mean RSSI\n");
+        count = 0;
+        normalRSSI = 0;
+        memset(last,0,sizeof(last));
+      }
+
     }
   }
 
-PROCESS_END();
+  PROCESS_END();
 }

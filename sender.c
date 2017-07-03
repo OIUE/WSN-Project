@@ -15,7 +15,6 @@
 #include <stdio.h>
 
 #include "dev/leds.h"
-#define PAIR_BY_ID 2
 /* handles connection and communication with the sink */
 #include "sink_conn.h"
 /*---------------------------------------------------------------------------*/
@@ -90,14 +89,9 @@ static void tcpip_handler(){
     }else{
       printf("ll addr does not seem to be right\n");
     }
-
-
-
   }
 }
 /*---------------------------------------------------------------------------*/
-
-
 PROCESS_THREAD(sender_process, ev, data){
   PROCESS_BEGIN();
   uip_ip6addr_t ipaddr;
@@ -119,14 +113,13 @@ PROCESS_THREAD(sender_process, ev, data){
   /* setup udp connection with sink */
   establishSinkConnection();
 
-  /* wait for a receiver to initialize a pairing*/
+  /* wait for a receiver to initialize pairing*/
   while(!isPaired){
     PROCESS_WAIT_EVENT();
     if(ev == tcpip_event) {
       tcpip_handler();
     }
   }
-
 
   /* send data periodically */
   etimer_set(&sendTimer, SEND_INTERVAL * CLOCK_SECOND);
@@ -141,13 +134,14 @@ PROCESS_THREAD(sender_process, ev, data){
       etimer_reset(&sendTimer);
     }
 
-    if(etimer_expired(&batteryTimer)) {
-      checkBattery(1);
+    if(etimer_expired(&batteryTimer) ||
+      (ev == sensors_event && data == &button_sensor) ) {
+      checkBattery();
       etimer_reset(&batteryTimer);
     }
 
-    if(ev == sensors_event && data == &button_sensor) {
-      checkBattery(0);
+    if(ev == tcpip_event){
+      tcpip_handler();
     }
 
   }

@@ -35,26 +35,17 @@ static void getBatteryLevel(){
   message.battery = battery_val;
 }
 /*---------------------------------------------------------------------------*/
-static void sendToSink(void* message){
+static void sendToSink(message){
   printf("sending data to sink\n");
-  uip_udp_packet_sendto(sink_conn, message, sizeof(*message),
+  uip_udp_packet_sendto(sink_conn, message, sizeof(message),
   &sink_ipaddr, UIP_HTONS(UDP_SINK_PORT));
 }
 /*---------------------------------------------------------------------------*/
-/*
-* 2.1V is the minimum power to operate the radio, so send warning before that
-* battery value of 1883.7 is equal to 2.3V
-* if the user presses the button on a device, send battery data regardless
-* of current value
-* @param mode 0 to always send battery measurement, 1 to only send if low
-*/
-static void checkBattery(int mode){
+static void checkBattery(){
   getBatteryLevel();
   printf("trying to send battery\n");
   printf("battery is %d\n", message.battery);
-  if((message.battery <= 1883) || mode == 0){
-    sendToSink(&message);
-  }
+  sendToSink();
 }
 /*---------------------------------------------------------------------------*/
 #endif
