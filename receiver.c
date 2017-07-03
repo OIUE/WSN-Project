@@ -9,6 +9,7 @@
 #include "net/rpl/rpl.h"
 #include "sys/node-id.h"
 #include "nbr-table.h"
+#include "net/ip/uip-debug.h"
 
 #include <stdio.h>
 #include "dev/leds.h"
@@ -26,7 +27,7 @@ static struct uip_udp_conn* sender_conn;
 static int normalRSSI = 0;
 static int count = 0;
 static int last[SAMPLE_LEN];
-static struct etimer pairTimer;
+static struct etimer pairTimer, timeoutTimer;
 static int senderId;
 /*----------------------------------------------------------------------------*/
 
@@ -138,16 +139,30 @@ PROCESS_THREAD(receiver_process, ev, data){
     }
   }
 
+etimer_set(&timeoutTimer, CLOCK_SECOND*5);
   /* receive and process incoming packet */
   while(1) {
     PROCESS_WAIT_EVENT();
     if(ev == tcpip_event) {
+      etimer_set(&timeoutTimer, CLOCK_SECOND*5);
       tcpip_handler();
     }
 
     if(etimer_expired(&batteryTimer)) {
       checkBattery();
       etimer_reset(&batteryTimer);
+    }
+
+    if(etimer_expired(&timeoutTimer)) {
+      printf("connection timeout, trying to pair again.\n");
+      etimer_set(&pairTimer,CLOCK_SECOND*3);
+      while(ev != tcpip_event){
+        PROCESS_WAIT_EVENT();
+        if(etimer_expired(&pairTimer)){
+          pairWithSender();
+          etimer_reset(&pairTimer);
+        }
+      }
     }
 
     /* if button is pressed once: send battery status to sink, if twice: recalculate mean RSSI*/

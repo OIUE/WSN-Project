@@ -59,28 +59,32 @@ static void tcpip_handler(){
   if(uip_newdata()){
     uint16_t* appdata;
     radio_value_t rssi;
+    uip_ip6addr_t pairing_ipaddr;
 
     rssi = packetbuf_attr(PACKETBUF_ATTR_RSSI);
     appdata = (uint16_t*)uip_appdata;
     printf("Got Data from node: %u ",*appdata);
     printf("RSSI = %ddBm\n",rssi);
     /* lookup local link address of potential receiver*/
-    receiver_ipaddr = uip_ds6_nbr_lookup(&UDP_IP_BUF->srcipaddr)->ipaddr;
+    pairing_ipaddr = uip_ds6_nbr_lookup(&UDP_IP_BUF->srcipaddr)->ipaddr;
     printf("ll addr of receiver is: ");
     uip_debug_ipaddr_print(&receiver_ipaddr);
     printf("\n");
     /* ll address has to start with default prefix*/
-    if(receiver_ipaddr.u8[0] == 0xfe && receiver_ipaddr.u8[1] == 0x80){
+    if(pairing_ipaddr.u8[0] == 0xfe && pairing_ipaddr.u8[1] == 0x80){
       #ifdef PAIR_BY_ID
       receiver_id = PAIR_BY_ID;
       if(*appdata == receiver_id){
         isPaired = 1;
+        receiver_ipaddr = pairing_ipaddr;
         printf("paired by id with node %i\n",receiver_id);
       }
       #else
         #ifdef PAIR_BY_RSSI
         if(bestRSSI < rssi){
           isPaired = 1;
+          receiver_ipaddr = pairing_ipaddr;
+          bestRSSI = rssi;
           receiver_id = *appdata;
           printf("paired by rssi with node %i\n",receiver_id);
         }
