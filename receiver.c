@@ -171,6 +171,7 @@ etimer_set(&timeoutTimer, CLOCK_SECOND*5);
       PROCESS_WAIT_EVENT_UNTIL((ev == sensors_event && data == &button_sensor) || etimer_expired(&pairTimer));
       if(etimer_expired(&pairTimer)){
         checkBattery();
+        etimer_set(&batteryTimer, CLOCK_SECOND*3600);
       }else if(ev == sensors_event && data == &button_sensor){
         printf("recalculating mean RSSI\n");
         count = 0;

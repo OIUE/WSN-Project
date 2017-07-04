@@ -141,7 +141,7 @@ PROCESS_THREAD(sender_process, ev, data){
     if(etimer_expired(&batteryTimer) ||
       (ev == sensors_event && data == &button_sensor) ) {
       checkBattery();
-      etimer_reset(&batteryTimer);
+      etimer_set(&batteryTimer, CLOCK_SECOND*3600);
     }
 
     if(ev == tcpip_event){
