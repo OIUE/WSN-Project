@@ -67,8 +67,8 @@ static void tcpip_handler(){
     printf("RSSI = %ddBm\n",rssi);
     /* lookup local link address of potential receiver*/
     pairing_ipaddr = uip_ds6_nbr_lookup(&UDP_IP_BUF->srcipaddr)->ipaddr;
-    printf("ll addr of receiver is: ");
-    uip_debug_ipaddr_print(&receiver_ipaddr);
+    printf("ll addr of potential receiver is: ");
+    uip_debug_ipaddr_print(&pairing_ipaddr);
     printf("\n");
     /* ll address has to start with default prefix*/
     if(pairing_ipaddr.u8[0] == 0xfe && pairing_ipaddr.u8[1] == 0x80){

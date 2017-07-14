@@ -15,9 +15,16 @@
 /*----------------------------------------------------------------------------*/
 #define UDP_SINK_PORT 7777
 #define UDP_IP_BUF    ((struct uip_udpip_hdr* ) &uip_buf[UIP_LLH_LEN])
+
+/*
+* value == 0 -> person noticed
+* value == 1 -> door opened noticed
+* value == 2 -> door closed noticed
+* value > 2  -> battery value
+*/
 typedef struct msg{
   uint16_t nodeId;
-  uint16_t battery;
+  uint16_t value;
 } msg_t;
 /*----------------------------------------------------------------------------*/
 static struct uip_udp_conn* conn;
@@ -27,12 +34,23 @@ static void tcpip_handler(){
   if(uip_newdata()){
     leds_toggle(LEDS_RED);
     msg_t message = * (msg_t*)uip_appdata;
-    
+
     /*
     * 2.1V is the minimum power to operate the radio, so send warning before that
     * battery value of 1883.7 is equal to 2.3V
     */
-    printf("node %i : battery at %i\n", message.nodeId, message.battery);
+    switch (message.value){
+      case 0:   printf("node %i : person\n", message.nodeId);
+                break;
+      case 1:   printf("node %i : door opened\n",message.nodeId);
+                break;
+      case 2:   printf("node %i : door closed\n",message.nodeId);
+                break;
+      default:  printf("node %i : battery val is: %i",message.nodeId, message.value);
+                break;
+
+    }
+
   }
 }
 /*----------------------------------------------------------------------------*/

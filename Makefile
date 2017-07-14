@@ -1,4 +1,4 @@
-CONTIKI_PROJECT = receiver sender sink
+CONTIKI_PROJECT = frame_receiver door_receiver sender sink
 
 all: $(CONTIKI_PROJECT)
 

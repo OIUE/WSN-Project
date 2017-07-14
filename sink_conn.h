@@ -6,9 +6,15 @@
 /*---------------------------------------------------------------------------*/
 #define UDP_SINK_PORT 7777
 /*---------------------------------------------------------------------------*/
+/*
+* value == 0 -> person noticed
+* value == 1 -> door closed noticed
+* value == 2 -> door opened noticed
+* value > 2  -> battery value
+*/
 typedef struct msg{
   uint16_t nodeId;
-  uint16_t battery;
+  uint16_t value;
 } msg_t;
 
 static struct uip_udp_conn* sink_conn;
@@ -32,7 +38,7 @@ static void getBatteryLevel(){
   uint16_t battery_val = battery_sensor.value(0);
   SENSORS_DEACTIVATE(battery_sensor);
   message.nodeId = node_id;
-  message.battery = battery_val;
+  message.value = battery_val;
 }
 /*---------------------------------------------------------------------------*/
 static void sendToSink(){
@@ -44,7 +50,7 @@ static void sendToSink(){
 static void checkBattery(){
   getBatteryLevel();
   printf("trying to send battery\n");
-  printf("battery is %d\n", message.battery);
+  printf("battery is %d\n", message.value);
   sendToSink();
 }
 /*---------------------------------------------------------------------------*/
