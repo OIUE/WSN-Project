@@ -34,7 +34,7 @@ static void tcpip_handler(){
       if(rssi < normalRSSI-ERROR_TOLERANCE ){
         leds_on(LEDS_RED);
         pos_count = 0;
-        if(neg_count > 9){
+        if(neg_count > 4){
           printf("recognized opening of door.\n");
           message.value = 1;
           sendToSink();
@@ -48,7 +48,7 @@ static void tcpip_handler(){
         leds_off(LEDS_RED);
         if(rssi > normalRSSI + ERROR_TOLERANCE){
           neg_count = 0;
-          if(pos_count > 9){
+          if(pos_count > 4){
             printf("recognized closing of door.\n");
             message.value = 2;
             sendToSink();

@@ -8,7 +8,7 @@
 #define NETSTACK_CONF_RDC                   nullrdc_driver
 
 #undef NETSTACK_RDC_CHANNEL_CHECKRATE
-#define NETSTACK_RDC_CHANNEL_CHECKRATE      64
+#define NETSTACK_RDC_CHANNEL_CHECKRATE      32
 
 #undef RF_CHANNEL
 #define RF_CHANNEL                          26

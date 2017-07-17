@@ -1,7 +1,6 @@
 #ifndef RECEIVER_H
 #define RECEIVER_H
 
-
 #include "contiki.h"
 #include "contiki-lib.h"
 #include "contiki-net.h"
@@ -59,12 +58,8 @@ static void resetNormalRSSI(){
   normalRSSI = 0;
 }
 /*----------------------------------------------------------------------------*/
-/*
-*
-* sampleLen cannot be greater than SAMPLE_LEN
-*/
-static void setNormalRSSI(int sampleLen){
-  if(count < sampleLen){
+static void setNormalRSSI(){
+  if(count < SAMPLE_LEN){
     leds_on(LEDS_BLUE);
     last[count] = rssi;
     count++;
@@ -111,6 +106,7 @@ PROCESS_THREAD(receiver_process, ev, data){
   }
   udp_bind(sender_conn, UIP_HTONS(UDP_RECEIVER_PORT));
 
+
   /* setup udp connection to sink */
   establishSinkConnection();
 
@@ -118,6 +114,7 @@ PROCESS_THREAD(receiver_process, ev, data){
   etimer_set(&pairTimer,CLOCK_SECOND*3);
   SENSORS_ACTIVATE(button_sensor);
 
+  printf("pairing with sender\n");
   /* try pairing every 3 seconds while there is no active connection wit a sender */
   while(ev != tcpip_event){
     PROCESS_WAIT_EVENT();
@@ -127,6 +124,7 @@ PROCESS_THREAD(receiver_process, ev, data){
     }
   }
 
+printf("receiving\n");
 etimer_set(&timeoutTimer, CLOCK_SECOND*5);
   /* receive and process incoming packet */
   while(1) {

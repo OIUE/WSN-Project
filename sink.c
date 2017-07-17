@@ -39,15 +39,7 @@ static void tcpip_handler(){
     * 2.1V is the minimum power to operate the radio, so send warning before that
     * battery value of 1883.7 is equal to 2.3V
     */
-    switch (message.value){
-      case 0:   printf("node %i : person\n", message.nodeId);
-                break;
-      case 1:   printf("node %i : door opened\n",message.nodeId);
-                break;
-      case 2:   printf("node %i : door closed\n",message.nodeId);
-                break;
-      default:  printf("node %i : battery val is: %i",message.nodeId, message.value);
-                break;
+    printf("%i,%i\n",message.nodeId, message.value);
 
     }
 
