@@ -35,6 +35,8 @@ static void tcpip_handler(){
         printf("recognized person\n");
         message.value = 0;
         sendToSink();
+      }else{
+        leds_off(LEDS_RED);
       }
     }
   }

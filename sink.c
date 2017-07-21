@@ -34,15 +34,7 @@ static void tcpip_handler(){
   if(uip_newdata()){
     leds_toggle(LEDS_RED);
     msg_t message = * (msg_t*)uip_appdata;
-
-    /*
-    * 2.1V is the minimum power to operate the radio, so send warning before that
-    * battery value of 1883.7 is equal to 2.3V
-    */
     printf("%i,%i\n",message.nodeId, message.value);
-
-    }
-
   }
 }
 /*----------------------------------------------------------------------------*/

@@ -1,0 +1,19 @@
+using saved target 'sky'
+/home/user/contiki/tools/sky/serialdump-linux -b115200 /dev/ttyUSB0
+8,0
+8,0
+12,1
+12,0
+8,0
+8,0
+8,0
+12,2
+12,1
+8,0
+8,0
+8,0
+8,0
+8,0
+8,0
+8,0
+8,0

@@ -22,7 +22,7 @@
 /*----------------------------------------------------------------------------*/
 #define UDP_SENDER_PORT	8765      // UDP port of sender
 #define UDP_RECEIVER_PORT	5678    // UDP port for sender connection
-#define ERROR_TOLERANCE 3
+#define ERROR_TOLERANCE 5
 #define SAMPLE_LEN 10
 #define UDP_IP_BUF    ((struct uip_udpip_hdr* ) &uip_buf[UIP_LLH_LEN])
 /*----------------------------------------------------------------------------*/
@@ -159,6 +159,8 @@ etimer_set(&timeoutTimer, CLOCK_SECOND*5);
         checkBattery();
         etimer_set(&batteryTimer, CLOCK_SECOND*3600);
       }else if(ev == sensors_event && data == &button_sensor){
+        etimer_set(&pairTimer,CLOCK_SECOND*3);
+        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&pairTimer));
         printf("recalculating mean RSSI\n");
         count = 0;
         normalRSSI = 0;

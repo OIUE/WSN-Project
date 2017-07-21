@@ -20,7 +20,7 @@
 /*---------------------------------------------------------------------------*/
 #define UDP_SENDER_PORT 8765      // UDP port for receiver connection
 #define UDP_RECEIVER_PORT 5678    // UDP port of receiver
-#define SEND_INTERVAL		0.5
+#define SEND_INTERVAL		0.25
 #define UDP_IP_BUF    ((struct uip_udpip_hdr* ) &uip_buf[UIP_LLH_LEN])
 /*---------------------------------------------------------------------------*/
 static struct uip_udp_conn* receiver_conn;
@@ -28,12 +28,8 @@ static uip_ip6addr_t receiver_ipaddr;
 static struct etimer sendTimer;
 static uint16_t receiver_id = 0;
 static int isPaired = 0;
-/*---------------------------------------------------------------------------*/
-/* pairing modes */
-#ifndef PAIR_BY_ID                //pairing by specific receiver id
-#define PAIR_BY_RSSI 1           //pairing by best connection
 static radio_value_t bestRSSI = -100;
-#endif
+/*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
 PROCESS(sender_process, "sender process");
 AUTOSTART_PROCESSES(&sender_process);
@@ -72,15 +68,6 @@ static void tcpip_handler(){
     printf("\n");
     /* ll address has to start with default prefix*/
     if(pairing_ipaddr.u8[0] == 0xfe && pairing_ipaddr.u8[1] == 0x80){
-      #ifdef PAIR_BY_ID
-      receiver_id = PAIR_BY_ID;
-      if(*appdata == receiver_id){
-        isPaired = 1;
-        receiver_ipaddr = pairing_ipaddr;
-        printf("paired by id with node %i\n",receiver_id);
-      }
-      #else
-        #ifdef PAIR_BY_RSSI
         if(bestRSSI < rssi){
           isPaired = 1;
           receiver_ipaddr = pairing_ipaddr;
@@ -88,8 +75,6 @@ static void tcpip_handler(){
           receiver_id = *appdata;
           printf("paired by rssi with node %i\n",receiver_id);
         }
-        #endif
-      #endif
     }else{
       printf("ll addr does not seem to be right\n");
     }
@@ -117,8 +102,10 @@ PROCESS_THREAD(sender_process, ev, data){
   /* setup udp connection with sink */
   establishSinkConnection();
 
+  printf(" available fopr pairing\n");
   /* wait for a receiver to initialize pairing*/
   while(!isPaired){
+    printf("waiting for receiver to send pair request\n");
     PROCESS_WAIT_EVENT();
     if(ev == tcpip_event) {
       tcpip_handler();
