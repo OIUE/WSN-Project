@@ -62,9 +62,6 @@ PROCESS_THREAD(sink_process, ev, data){
     printf("failed to create a new RPL DAG\n");
   }
 
-  /* RDC off to ensure high packet reception rates. */
-  NETSTACK_RDC.off(1);
-
   /* setup new UDP connection */
   conn = udp_new(NULL, UIP_HTONS(UDP_SINK_PORT), NULL);
   if(conn == NULL){

@@ -10,7 +10,7 @@ Pressing Receiver button twice resets normal RSSI.
 
 
 
-Code Mappings
+Config explanation
 
 Doors:
   open_close:
@@ -18,10 +18,13 @@ Doors:
             2 == closed door
 
 Events:
-      Condition:
-                0 = Timed event. Event is triggered when time defined in "Time" has passed with someone being in the room
-                1 = No one in the room event. Event is triggered when room is empty
-                2 = Someone in the room event. Event is triggered when room isn't empty
+      type:
+                0 = Number of people in a room event. Event is triggered when a certain number is reached/exceeded
+                1 = No one in the house event. Event is triggered when house is empty
+                2 = Timed event. Event is triggered when defined time between entering and leaving a room has run out.
 
-                10 = No one in the house event.
-                20 = Someone in the House event
+      people:
+                number of people as condition for certain events
+
+      time:
+                time in minutes as condition for certain event

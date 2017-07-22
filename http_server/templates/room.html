@@ -1,0 +1,14 @@
+<html>
+<head>
+   <meta name="description" content="Door Monitoring System">
+   <meta name="keywords" content="">
+   <title>DMS Rooms</title>
+</head>
+<body>
+  <a href = "/">Log</a>  <br /> <br />
+{% for row in param %}
+  {{ row['name'] }} <br />
+  People: {{row["people"]}} <br /> <br />
+{% end %}
+</body>
+</html>

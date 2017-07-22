@@ -1,0 +1,60 @@
+[
+  [
+    {
+      "name": "Nevin's Room",
+      "people": 1
+    },
+
+    {
+      "name": "Hallway",
+      "people": 2
+    },
+
+    {
+      "name": "OUT",
+      "people": 100
+    }
+  ],
+
+  [
+    {
+      "id": 0,
+      "frame_receiver": 8,
+      "door_receiver": 3,
+      "room_in": "Nevin's Room",
+      "room_out": "Hallway",
+      "open_close": 1
+    }
+  ],
+
+  [
+    {
+      "description": "House Party",
+      "room" : "Nevin's Room",
+      "type": 0,
+      "people" : 2,
+      "time" : 0
+    },
+
+    {
+      "description": "Everybody has left the building",
+      "room" : "",
+      "type": 1,
+      "people" : 0,
+      "time" : 0
+    },
+
+    {
+      "description": "Taking too long",
+      "room" : "Nevin's Room",
+      "type": 2,
+      "people" : 5,
+      "time" : 1
+    }
+
+  ],
+
+  [
+  "Nevin.allwood@yahoo.de"
+  ]
+]
