@@ -1,7 +1,7 @@
 1. Open config.json and change variables to represent current setup
-(Structure is: List of Rooms, List of Doors, List of Events, recipient email address)
-2. use 'python http.py' to start the http server
-3. Attach sink mote to pc and use 'make login TARGET==*** | python cmdScript.py' to start the monitoring system
+(Structure is: list of Rooms, list of Doors, list of Events, list of recipient email addresses)
+2. Attach sink mote to pc and use 'make login TARGET==*** | python cmdScript.py' to start the monitoring system
+3. navigate to http_server and use 'python http.py' to start the server
 4. vistit localhost:8080 to access the web server
 
 
