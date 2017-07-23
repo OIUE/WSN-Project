@@ -32,7 +32,7 @@ static uip_ip6addr_t ipaddr;
 /*----------------------------------------------------------------------------*/
 static void tcpip_handler(){
   if(uip_newdata()){
-    leds_toggle(LEDS_RED);
+    leds_toggle(LEDS_BLUE);
     msg_t message = * (msg_t*)uip_appdata;
     printf("%i,%i\n",message.nodeId, message.value);
   }

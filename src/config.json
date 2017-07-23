@@ -1,13 +1,13 @@
 [
   [
     {
-      "name": "Nevin's Room",
-      "people": 1
+      "name": "Office",
+      "people": 3
     },
 
     {
       "name": "Hallway",
-      "people": 2
+      "people": 0
     },
 
     {
@@ -21,7 +21,7 @@
       "id": 0,
       "frame_receiver": 8,
       "door_receiver": 3,
-      "room_in": "Nevin's Room",
+      "room_in": "Office",
       "room_out": "Hallway",
       "open_close": 1
     }
@@ -29,10 +29,10 @@
 
   [
     {
-      "description": "House Party",
-      "room" : "Nevin's Room",
+      "description": "Hallway Party",
+      "room" : "Hallway",
       "type": 0,
-      "people" : 2,
+      "people" : 3,
       "time" : 0
     },
 
@@ -46,15 +46,16 @@
 
     {
       "description": "Taking too long",
-      "room" : "Nevin's Room",
+      "room" : "Office",
       "type": 2,
-      "people" : 5,
+      "people" : 1,
       "time" : 1
     }
 
   ],
 
   [
-  "Nevin.allwood@yahoo.de"
+  "Nevin.allwood@yahoo.de",
+  "christoph.anders@stud.uni-due.de"
   ]
 ]

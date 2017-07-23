@@ -49,8 +49,9 @@ def timedEventCounter(event, room, timestarted):
             print_event(event)
             sendMail(event["description"])
             inRoom = 0 #sending email once is enough
+            timerEventList.remove(event["description"])
 
-#goes through the eventList and checks wheter an event occured
+#goes through the eventList and checks whether an event occured
 def checkForEvent():
     for event in eventList:
 
@@ -209,9 +210,11 @@ while 1:
     elif currentActionCode > 2: #battery
         # 2.1V is the minimum power to operate the radio, so send warning before that
         # battery value of 1883.7 is equal to 2.3V
-        battery = (currentActionCode/4095)*5
+        battery = (float(currentActionCode)/float(4095))*5
         print(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ": " +" Battery status of node ("+
-        str(currentNodeId) + ") is "+ "%0.2fV" % battery)
+        str(currentNodeId) + ") is "+ "%.2fV" % battery)
+        if battery <= 2.3:
+            sendMail("Battery of mote with nodeid %i is low and needs to be changed" % currentNodeId)
 
     #closing doors can be done from either side without entering/leaving a room
     if(currentActionCode == 2):
