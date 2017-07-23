@@ -1,0 +1,40 @@
+2017-07-23 10:41:36: Someone walked out of the Hallway and into the Nevin's Room
+2017-07-23 10:41:36: People in the Hallway : 1
+2017-07-23 10:41:36: People in the Nevin's Room : 2
+2017-07-23 10:41:40: System Stopped
+2017-07-23 10:43:15: Someone walked out of the Hallway and into the Nevin's Room
+2017-07-23 10:43:15: People in the Hallway : 1
+2017-07-23 10:43:15: People in the Nevin's Room : 2
+2017-07-23 10:44:08: Someone walked out of the Hallway and into the Nevin's Room
+2017-07-23 10:44:08: Event happened: House Party
+ sending Email
+2017-07-23 10:44:09: People in the Hallway : 0
+2017-07-23 10:44:09: People in the Nevin's Room : 3
+2017-07-23 10:44:31: Someone walked out of the Nevin's Room and into the Hallway
+2017-07-23 10:44:31: Event happened: House Party
+ sending Email
+2017-07-23 10:44:32: People in the Hallway : 1
+2017-07-23 10:44:32: People in the Nevin's Room : 2
+2017-07-23 10:45:39: System Stopped
+2017-07-23 10:49:32: Someone walked out of the Hallway and into the Nevin's Room
+2017-07-23 10:49:32: People in the Hallway : 1
+2017-07-23 10:49:32: People in the Nevin's Room : 2
+2017-07-23 10:49:32: Event happened: House Party
+ sending Email
+2017-07-23 11:02:59: Someone walked out of the Nevin's Room and into the Hallway
+2017-07-23 11:02:59: People in the Hallway : 2
+2017-07-23 11:02:59: People in the Nevin's Room : 1
+2017-07-23 11:03:09: System Stopped
+
+2017-07-23 11:03:45: Someone walked out of the Nevin's Room and into the Hallway
+2017-07-23 11:03:45: People in the Hallway : 3
+2017-07-23 11:03:45: People in the Nevin's Room : 0
+2017-07-23 11:05:56: System Stopped
+
+2017-07-23 11:07:50: System Stopped
+
+2017-07-23 11:07:58: Someone walked out of the Nevin's Room and into the Hallway
+2017-07-23 11:07:58: People in the Hallway : 3
+2017-07-23 11:07:58: People in the Nevin's Room : 0
+2017-07-23 11:08:27: System Stopped
+

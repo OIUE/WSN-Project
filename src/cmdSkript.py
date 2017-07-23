@@ -4,6 +4,7 @@ import signal
 import sys
 import smtplib
 import thread
+import os
 from email.mime.text import MIMEText
 from time import gmtime, strftime
 import time
@@ -19,8 +20,10 @@ emailList = configList[3]
 
 timerEventList = []
 
-log = open('/home/user/Workspace/Project/http_server/log.txt','a')
+log = open(os.path.join(os.pardir,'http_server/log.txt' ),'a',0)
+log.write("System started\n")
 
+#sends mail to emails specified in the config
 def sendMail(eventdescription):
     msg = MIMEText(eventdescription)
     msg['Subject'] = 'DMS Alert'
@@ -35,6 +38,7 @@ def sendMail(eventdescription):
 
     s.quit()
 
+#function used for threaded countdown of a timed event
 def timedEventCounter(event, room, timestarted):
     inRoom = 1
     while inRoom:
@@ -46,6 +50,7 @@ def timedEventCounter(event, room, timestarted):
             sendMail(event["description"])
             inRoom = 0 #sending email once is enough
 
+#goes through the eventList and checks wheter an event occured
 def checkForEvent():
     for event in eventList:
 
@@ -76,14 +81,24 @@ def checkForEvent():
                     thread.start_new_thread(timedEventCounter,(event,room,int(time.time())))
                     timerEventList.append(event["description"])
 
+def copy_to_permalog():
+    with open(os.path.join(os.pardir,'http_server/log.txt' ),'r') as log:
+        lines = log.readlines()
 
+    #open and close log in write mode to clear
+    log = open(os.path.join(os.pardir,'http_server/log.txt' ),'w').close()
 
+    with open(os.path.join(os.pardir,'http_server/permalog.txt' ),'a') as permaLog:
+        for line in lines:
+            permaLog.write(line)
 
+# handles Ctrl+C termination
 def signal_handler(signum,frame):
     print("exiting process")
     log.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + ": " +
-    "System Stopped\n")
+    "System Stopped\n\n")
     log.close()
+    copy_to_permalog()
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
@@ -108,7 +123,7 @@ def print_room(room):
     "People in the " + room["name"] + " : " + str(room["people"]))
     print(string)
     log.write(string+"\n")
-    with open('/home/user/Workspace/Project/http_server/rooms.json', 'w') as roomfile:
+    with open(os.path.join(os.pardir,'http_server/rooms.json'), 'w') as roomfile:
         json.dump(roomList,roomfile)
 
 def print_door_opened(door):
@@ -129,6 +144,7 @@ def print_event(event):
     print(string)
     log.write(string+"\n")
 
+
 def lookup_door(nodeId):
     for door in doorList:
         if door["frame_receiver"] == nodeId or door["door_receiver"] == nodeId:
@@ -139,6 +155,7 @@ def lookup_room(roomName):
         if(room["name"] == roomName):
             return room
 
+# lists of parameters from the previous received signal
 lastMsgTimes = {}
 for door in doorList:
     lastMsgTimes[door["id"]] = 0
@@ -156,6 +173,7 @@ while 1:
     row = raw_input()
     now = int(time.time())
 
+    # when logging into the sink some strings are printed that are not signals from motes
     if(not row[0].isdigit()):
         continue
 
@@ -205,7 +223,6 @@ while 1:
         # one had to be of a frame receiver -> someone walked into the room
         if currentNodeId == currentDoor["door_receiver"]:
             print_enter(currentDoor)
-            checkForEvent()
 
             for room in roomList:
                 if room["name"] == currentDoor["room_out"]:
@@ -217,6 +234,7 @@ while 1:
                     room["people"] += 1
                     print_room(room)
 
+            checkForEvent()
             #action finished, new action in next step
             lastNodeIDs[currentDoor["id"]] = -1
             lastActioncodes[currentDoor["id"]] = -1
@@ -224,7 +242,6 @@ while 1:
         #previously door_receiver pass or open, now frame_receiver -> someone walked out of the room
         else:
             print_leave(currentDoor)
-            checkForEvent()
 
             for room in roomList:
                 if room["name"] == currentDoor["room_out"]:
@@ -236,6 +253,7 @@ while 1:
                     room["people"] -= 1
                     print_room(room)
 
+            checkForEvent()
             #action finished, new action in next step
             lastNodeIDs[currentDoor["id"]] = -1
             lastActioncodes[currentDoor["id"]] = -1

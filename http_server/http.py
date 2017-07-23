@@ -2,7 +2,6 @@ import tornado.web
 import tornado.autoreload
 import tornado.ioloop
 import os
-import filehandler
 import json
 
 settings = {
