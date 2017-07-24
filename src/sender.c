@@ -61,12 +61,11 @@ static void tcpip_handler(){
     appdata = (uint16_t*)uip_appdata;
     printf("Got Data from node: %u ",*appdata);
     printf("RSSI = %ddBm\n",rssi);
-    /* lookup local link address of potential receiver*/
-    pairing_ipaddr = uip_ds6_nbr_lookup(&UDP_IP_BUF->srcipaddr)->ipaddr;
-    printf("ll addr of potential receiver is: ");
+    pairing_ipaddr = UDP_IP_BUF->srcipaddr;
+    printf("IP addr of potential receiver is: ");
     uip_debug_ipaddr_print(&pairing_ipaddr);
     printf("\n");
-    /* ll address has to start with default prefix*/
+    /* IP address has to start with default prefix*/
     if(pairing_ipaddr.u8[0] == 0xfe && pairing_ipaddr.u8[1] == 0x80){
         if(bestRSSI < rssi){
           isPaired = 1;
